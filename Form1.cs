@@ -18,15 +18,19 @@ namespace ChanForm {
   public partial class MainForm :Form {
 
     private int chanCnt;
-    public static string dataBuff;
+    public static string frmDataBuff;
+    public static string frmDataBuffA;
+    public static string frmDataBuffB;
     private DataCollector dc01;
-    public static List<String> dleList;
+    public static List<String> frmDleList;
     public static List<frmChannelForm> channels;
     public List<Series> seriesList;
     Series tmpSeries;
     private string portStr = Settings.Default.sAttrPort;
     private static bool foundDLEs;
-    private bool foundDLEsShadow;
+    private int frmDleCountShadow;
+    private int frmDleCount;
+    public static bool frmBuffSel;
 
     int frmSelMode;
     Point frmMousePnt0;
@@ -41,7 +45,7 @@ namespace ChanForm {
     //=============================================================================================
     public MainForm() {
       chanCnt = 0;
-      dataBuff = "";
+      frmDataBuff = "";
       masterT = 0;
 
       frmSelMode = 0;
@@ -50,9 +54,10 @@ namespace ChanForm {
 
       dc01 = new DataCollector(Settings.Default.sAttrPort, Settings.Default.sAttrBaud, DistData);
       channels = new List<frmChannelForm>();
-      dleList = new List<String>();
+      frmDleList = new List<String>();
       foundDLEs = false;
-      foundDLEsShadow = false;
+      frmDleCountShadow = 0;
+      frmBuffSel = false; // false = buffer A
 
       InitializeComponent();
       seriesList = new List<Series>();
@@ -65,59 +70,77 @@ namespace ChanForm {
     }
 
     //=============================================================================================
+    //
+    //   Given a fully formed buffer of the whole data frame, searches for, IDs all available DLEs
+    //   which cooresponds to data channels. These DLEs will be used to populatea frmDleList so
+    //   that the main form will always have a current list of aviable channels.
+    //
+    //=============================================================================================
     public static void getDLEs() {
-      string[] tmpStrAry = { };
-      bool eol = false;
 
-
-      eol = nStr.IndexOf('>') != -1;
-      dleList.Clear();
-      if( !eol ) {
-        Console.WriteLine("haven't found EOL");
-        dataBuff += nStr;
-      } //  if( tmpStr.IndexOf('>') == -1 )
-      else {
-        tmpStrAry = dataBuff.Split();
-        foreach( string str in tmpStrAry ) {
-          if( str.IndexOf('&') != -1 ) {
-            dleList.Add(str.Substring(1));
-            foundDLEs = true;
-          }
-
+      frmDleList.Clear();
+      string[] tmpStrAry = frmDataBuff.Split();
+      foreach( string str in tmpStrAry ) {
+        if( str.IndexOf('&') != -1 ) {
+          frmDleList.Add(str.Substring(1));
+          foundDLEs = true;
         }
-        Console.WriteLine("DLE count:" + dleList.Count.ToString());
-        dataBuff = "";
 
-        Console.WriteLine("found EOL");
-      } //   found EOL
+      }
+      Console.WriteLine("DLE count:" + frmDleList.Count.ToString());
+      frmDataBuff = "";
+
     }
       
 
+    //=============================================================================================
+    //   Recieves data from the serial stream as bytes, converts them to strings, concantinates them 
+    //   into a single string that represents a complete data frame.
+    //   Note: any data accessed here must be public static data member
     //=============================================================================================
     public static void DistData(List<byte> bytes) {
       string cntStr = bytes.Count().ToString();
       byte[] byteAry = bytes.ToArray();
       string[] tmpStrAry = { };
       string tmpStr = "";
-      bool eol = false;
-      bool eolShadow = false;
 
+      //---Convert bytes to string and append to the local buffer
       foreach( byte b in byteAry ) {
         tmpStr += Convert.ToChar(b);
       }
 
-      eol = tmpStr.IndexOf('>') != -1;
+      //---if an EOL is found, its the end of a frame; we need to copy it to the main buffer,
+      //   clear the current 2ndary buffer (A or B) and swap buffers
 
-      if( eol )
-        Console.WriteLine("Found EOL");
-
-      if( !eol && eol != eolShadow )
-        dataBuff = "";
+      bool eol = tmpStr.IndexOf('>') != -1;
 
 
-      dataBuff += tmpStr;
+      if( eol ) {
+        Console.WriteLine("Found EOL: copy and swap buffers");
 
-      Console.WriteLine("dataBuff:" + dataBuff);
+        //---temp buffer A is full: copy to primary buffer, clear the current 2ndary
+        //   buffer (A) and switch to the other buffer (B)
+        if( frmBuffSel ) { 
+          frmDataBuff = frmDataBuffA;
+          frmDataBuffA = "";
+        }
+        else {
+          frmDataBuff = frmDataBuffB;
+          frmDataBuffB = "";
+        }
+        frmBuffSel = !frmBuffSel;
+      }
+
+      //---write the local buffer to selected 2ndary buffer
+      if( frmBuffSel ) {
+        frmDataBuffA += tmpStr;
+        Console.WriteLine("frmDataBuffA:" + frmDataBuffA);
+      }
+      else {
+        frmDataBuffB += tmpStr;
+        Console.WriteLine("frmDataBuffB:" + frmDataBuffB);
+        
+      }
 
       Console.WriteLine("new data:" + cntStr + " bytes:" + tmpStr);
       try {
@@ -129,7 +152,6 @@ namespace ChanForm {
         Console.WriteLine("cfoParseStr threw exception");
       }
 
-      eolShadow = eol;
     }
 
     //=============================================================================================
@@ -161,10 +183,10 @@ namespace ChanForm {
         dc01.closePort();
       }
       else {
-        masterTimer.Interval = 10;
-        masterTimer.Enabled = true;
         dc01.openPort();
       }
+      
+      masterTimer.Enabled = dc01.portState;
 
       foundDLEs = false;
 
@@ -180,13 +202,17 @@ namespace ChanForm {
 
     //=============================================================================================
     public void updateGUI() {
+       
       tsbtAddChannel.Enabled = foundDLEs;
 
       getDLEs();
 
-      if( !foundDLEs && dleList.Count > 0 ) {
+      frmDleCountShadow = frmDleCount; 
+      frmDleCount = frmDleList.Count;
+
+      if( frmDleCount > 0 && frmDleCount != frmDleCountShadow) {
         tscbAvailableSigs.Items.Clear();
-        foreach( string d in dleList ) {
+        foreach( string d in frmDleList ) {
           tscbAvailableSigs.Items.Add(d);
         }
       }
@@ -202,6 +228,7 @@ namespace ChanForm {
       tsslComPort.Text = "Port:" + dc01.port;
       tsslBaud.Text = "Baud:" + dc01.baud;
       tsslTime.Text = "T:" + masterT.ToString() + "s";
+      tsslDleCount.Text = "DLE Count:" + frmDleList.Count.ToString();
       tsslStartDelay.Text = "Start Delay:" + dcStartDelay.ToString() + "ms";
 
     }
@@ -292,6 +319,7 @@ namespace ChanForm {
       Settings.Default.Save();
     }
 
+    //=============================================================================================
     private void chart1_Click(object sender, EventArgs e) {
 
     }
@@ -328,26 +356,12 @@ namespace ChanForm {
 
     //=============================================================================================
     private void masterTimer_Tick(object sender, EventArgs e) {
-      if( foundDLEs) {
-        if( foundDLEsShadow != foundDLEs ) {
-          masterTimer.Enabled = false;
-          masterTimer.Interval = 1000;
-          masterTimer.Enabled = true;
-        }
-        else {
-          masterT++;
-          Console.WriteLine("masterT:" + masterT);
-          foreach( frmChannelForm fcf in channels )
-            fcf.extTrigger(masterT);
-        }
-      }
-      else {
-
-        dcStartDelay += 1;
-      }
+      masterT++;
+      Console.WriteLine("masterT:" + masterT);
+      foreach( frmChannelForm fcf in channels )
+        fcf.extTrigger(masterT);
       
       updateGUI();
-      foundDLEsShadow = foundDLEs;
     }
 
     //=============================================================================================

@@ -52,6 +52,7 @@
       this.tsChannels = new System.Windows.Forms.ToolStrip();
       this.tsbtAddChannel = new System.Windows.Forms.ToolStripButton();
       this.tscbAvailableSigs = new System.Windows.Forms.ToolStripComboBox();
+      this.tsbRefreshDLEs = new System.Windows.Forms.ToolStripButton();
       this.gbxGraph = new System.Windows.Forms.GroupBox();
       this.chart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
       this.toolStrip2 = new System.Windows.Forms.ToolStrip();
@@ -65,7 +66,7 @@
       this.tsslStartDelay = new System.Windows.Forms.ToolStripStatusLabel();
       this.serialPort1 = new System.IO.Ports.SerialPort(this.components);
       this.masterTimer = new System.Windows.Forms.Timer(this.components);
-      this.tsbRefreshDLEs = new System.Windows.Forms.ToolStripButton();
+      this.tsslDleCount = new System.Windows.Forms.ToolStripStatusLabel();
       this.menuStrip1.SuspendLayout();
       this.toolStrip1.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -263,6 +264,16 @@
       this.tscbAvailableSigs.Text = "Available Signals";
       this.tscbAvailableSigs.ToolTipText = "Available Signals";
       // 
+      // tsbRefreshDLEs
+      // 
+      this.tsbRefreshDLEs.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+      this.tsbRefreshDLEs.Image = ((System.Drawing.Image)(resources.GetObject("tsbRefreshDLEs.Image")));
+      this.tsbRefreshDLEs.ImageTransparentColor = System.Drawing.Color.Magenta;
+      this.tsbRefreshDLEs.Name = "tsbRefreshDLEs";
+      this.tsbRefreshDLEs.Size = new System.Drawing.Size(78, 22);
+      this.tsbRefreshDLEs.Text = "Refresh DLEs";
+      this.tsbRefreshDLEs.Click += new System.EventHandler(this.tsbRefreshDLEs_Click);
+      // 
       // gbxGraph
       // 
       this.gbxGraph.Controls.Add(this.chart1);
@@ -357,7 +368,8 @@
             this.tsslComPort,
             this.tsslBaud,
             this.tsslTime,
-            this.tsslStartDelay});
+            this.tsslStartDelay,
+            this.tsslDleCount});
       this.statusStrip1.Location = new System.Drawing.Point(3, 392);
       this.statusStrip1.Name = "statusStrip1";
       this.statusStrip1.Size = new System.Drawing.Size(598, 22);
@@ -401,18 +413,14 @@
       // 
       // masterTimer
       // 
-      this.masterTimer.Interval = 1;
+      this.masterTimer.Interval = 1000;
       this.masterTimer.Tick += new System.EventHandler(this.masterTimer_Tick);
       // 
-      // tsbRefreshDLEs
+      // tsslDleCount
       // 
-      this.tsbRefreshDLEs.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-      this.tsbRefreshDLEs.Image = ((System.Drawing.Image)(resources.GetObject("tsbRefreshDLEs.Image")));
-      this.tsbRefreshDLEs.ImageTransparentColor = System.Drawing.Color.Magenta;
-      this.tsbRefreshDLEs.Name = "tsbRefreshDLEs";
-      this.tsbRefreshDLEs.Size = new System.Drawing.Size(78, 22);
-      this.tsbRefreshDLEs.Text = "Refresh DLEs";
-      this.tsbRefreshDLEs.Click += new System.EventHandler(this.tsbRefreshDLEs_Click);
+      this.tsslDleCount.Name = "tsslDleCount";
+      this.tsslDleCount.Size = new System.Drawing.Size(66, 17);
+      this.tsslDleCount.Text = "DLE Count:";
       // 
       // MainForm
       // 
@@ -480,6 +488,7 @@
     private System.Windows.Forms.ImageList imageList1;
     private System.Windows.Forms.ToolStripStatusLabel tsslStartDelay;
     private System.Windows.Forms.ToolStripButton tsbRefreshDLEs;
+    private System.Windows.Forms.ToolStripStatusLabel tsslDleCount;
   }
 }
 

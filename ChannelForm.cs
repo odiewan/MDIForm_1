@@ -53,7 +53,6 @@ namespace ChanForm {
     String cfoMinStr;
     String cfoMaxStr;
     String cfoAvgStr;
-    String cfoUnit;
 
     Decimal cfoValueRaw;
     Decimal cfoValueRawShadow;
@@ -64,12 +63,10 @@ namespace ChanForm {
     Decimal cfoValDecimal;
     Decimal cfoDDT; //--- d/dt of cfoValDecimal
     int cfoT;  //---time, in millisecs that we have data for----
-    int cfoMasterT;
 
 
 
     int cfoDataCount;
-    int cfoListCount;
 
     private int cfoTickerIdx;
     
@@ -92,7 +89,6 @@ namespace ChanForm {
       cfoMinStr =  "";
       cfoMaxStr =  "";
       cfoAvgStr =  "";
-      cfoUnit =  "";
 
       cfoValueRaw = 0;
       cfoValueRawShadow = 0;
@@ -101,7 +97,6 @@ namespace ChanForm {
       cfoValDecimal = 0;
 
       cfoDataCount = 0;
-      cfoListCount = 0;
 
       cfoEnable = false;
 
@@ -280,13 +275,14 @@ namespace ChanForm {
 
     //=============================================================================================
     private void updateVals() {
+      decimal denom = timer1.Interval/1000;
       if( cfoValueRaw > cfoMax )
         cfoMax = cfoValueRaw;
 
       if( cfoValueRaw < cfoMin )
         cfoMin = cfoValueRaw;
-        cfoDDT = (cfoAvg - cfoAvgShadow) / 1000;
-        //cfoDDT = (cfoValueRaw - cfoValueRawShadow) / 1000;
+
+      cfoDDT = (cfoAvg - cfoAvgShadow) / denom;
 
       cfoValueRawShadow = cfoValueRaw;
     }
