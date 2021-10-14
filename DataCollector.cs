@@ -60,8 +60,8 @@ namespace MDIForm_1 {
       _port = nPort;
       _baud = nBaud;
       openPort();
-    }    
-    
+    }
+
     //=============================================================================================
     public void openPort() {
       _serialPort.BaudRate = _baud;
@@ -90,7 +90,7 @@ namespace MDIForm_1 {
 
     //=============================================================================================
     private void SerialPortDataReceived(object sender, SerialDataReceivedEventArgs e) {
-      
+
       if(_serialPort.IsOpen) {
         while( _serialPort.BytesToRead > 0) {
           var count = _serialPort.BytesToRead;
@@ -99,7 +99,7 @@ namespace MDIForm_1 {
           _serialPort.Read(bytes, 0, count);
           AddBytes(bytes);
         }
-    }
+      }
     }
 
     //=============================================================================================

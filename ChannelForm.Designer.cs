@@ -25,9 +25,13 @@
     private void InitializeComponent() {
       this.components = new System.ComponentModel.Container();
       this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+      this.tsslState = new System.Windows.Forms.ToolStripStatusLabel();
       this.tsslDCount = new System.Windows.Forms.ToolStripStatusLabel();
       this.tsslT = new System.Windows.Forms.ToolStripStatusLabel();
+      this.tsslTicker = new System.Windows.Forms.ToolStripStatusLabel();
       this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+      this.tsbtEnable = new System.Windows.Forms.ToolStripButton();
+      this.tsbtClearMeta = new System.Windows.Forms.ToolStripButton();
       this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
       this.tbxMax = new System.Windows.Forms.TextBox();
       this.tbxValue = new System.Windows.Forms.TextBox();
@@ -44,10 +48,6 @@
       this.gbxChannelBuffer = new System.Windows.Forms.GroupBox();
       this.rtbxChannelBuffer = new System.Windows.Forms.RichTextBox();
       this.timer1 = new System.Windows.Forms.Timer(this.components);
-      this.tsbtEnable = new System.Windows.Forms.ToolStripButton();
-      this.tsbtClearMeta = new System.Windows.Forms.ToolStripButton();
-      this.tsslState = new System.Windows.Forms.ToolStripStatusLabel();
-      this.tsslTicker = new System.Windows.Forms.ToolStripStatusLabel();
       this.statusStrip1.SuspendLayout();
       this.toolStrip1.SuspendLayout();
       this.tableLayoutPanel1.SuspendLayout();
@@ -63,9 +63,17 @@
             this.tsslTicker});
       this.statusStrip1.Location = new System.Drawing.Point(0, 292);
       this.statusStrip1.Name = "statusStrip1";
-      this.statusStrip1.Size = new System.Drawing.Size(307, 22);
+      this.statusStrip1.Size = new System.Drawing.Size(341, 22);
       this.statusStrip1.TabIndex = 5;
       this.statusStrip1.Text = "statusStrip1";
+      // 
+      // tsslState
+      // 
+      this.tsslState.Image = global::MDIForm_1.Properties.Resources.Pause_grey_16x;
+      this.tsslState.Name = "tsslState";
+      this.tsslState.Size = new System.Drawing.Size(16, 17);
+      this.tsslState.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
+      this.tsslState.ToolTipText = "Disabled";
       // 
       // tsslDCount
       // 
@@ -79,6 +87,14 @@
       this.tsslT.Size = new System.Drawing.Size(35, 17);
       this.tsslT.Text = "T: --x";
       // 
+      // tsslTicker
+      // 
+      this.tsslTicker.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+      this.tsslTicker.Image = global::MDIForm_1.Properties.Resources.TaskCenterStatusBarAni_00_16x;
+      this.tsslTicker.Name = "tsslTicker";
+      this.tsslTicker.Size = new System.Drawing.Size(12, 17);
+      this.tsslTicker.Text = "\\";
+      // 
       // toolStrip1
       // 
       this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -86,16 +102,38 @@
             this.tsbtClearMeta});
       this.toolStrip1.Location = new System.Drawing.Point(0, 0);
       this.toolStrip1.Name = "toolStrip1";
-      this.toolStrip1.Size = new System.Drawing.Size(307, 25);
+      this.toolStrip1.Size = new System.Drawing.Size(341, 25);
       this.toolStrip1.TabIndex = 8;
       this.toolStrip1.Text = "toolStrip1";
+      // 
+      // tsbtEnable
+      // 
+      this.tsbtEnable.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+      this.tsbtEnable.Image = global::MDIForm_1.Properties.Resources.Run_16x;
+      this.tsbtEnable.ImageTransparentColor = System.Drawing.Color.Magenta;
+      this.tsbtEnable.Name = "tsbtEnable";
+      this.tsbtEnable.Size = new System.Drawing.Size(23, 22);
+      this.tsbtEnable.Text = "toolStripButton2";
+      this.tsbtEnable.Click += new System.EventHandler(this.tsbtEnable_Click);
+      // 
+      // tsbtClearMeta
+      // 
+      this.tsbtClearMeta.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+      this.tsbtClearMeta.Image = global::MDIForm_1.Properties.Resources.ResetTimelineView_inverse_16x;
+      this.tsbtClearMeta.ImageTransparentColor = System.Drawing.Color.Magenta;
+      this.tsbtClearMeta.Name = "tsbtClearMeta";
+      this.tsbtClearMeta.Size = new System.Drawing.Size(23, 22);
+      this.tsbtClearMeta.Text = "toolStripButton1";
+      this.tsbtClearMeta.Click += new System.EventHandler(this.tsbtClearMeta_Click);
       // 
       // tableLayoutPanel1
       // 
       this.tableLayoutPanel1.AutoSize = true;
-      this.tableLayoutPanel1.ColumnCount = 2;
+      this.tableLayoutPanel1.ColumnCount = 4;
       this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-      this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 195F));
+      this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 119F));
+      this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 46F));
+      this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 8F));
       this.tableLayoutPanel1.Controls.Add(this.tbxMax, 1, 2);
       this.tableLayoutPanel1.Controls.Add(this.tbxValue, 1, 1);
       this.tableLayoutPanel1.Controls.Add(this.label1, 0, 0);
@@ -118,7 +156,7 @@
       this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
       this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
       this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-      this.tableLayoutPanel1.Size = new System.Drawing.Size(307, 156);
+      this.tableLayoutPanel1.Size = new System.Drawing.Size(341, 156);
       this.tableLayoutPanel1.TabIndex = 9;
       // 
       // tbxMax
@@ -242,7 +280,7 @@
       this.gbxChannelBuffer.Dock = System.Windows.Forms.DockStyle.Fill;
       this.gbxChannelBuffer.Location = new System.Drawing.Point(0, 181);
       this.gbxChannelBuffer.Name = "gbxChannelBuffer";
-      this.gbxChannelBuffer.Size = new System.Drawing.Size(307, 111);
+      this.gbxChannelBuffer.Size = new System.Drawing.Size(341, 111);
       this.gbxChannelBuffer.TabIndex = 10;
       this.gbxChannelBuffer.TabStop = false;
       this.gbxChannelBuffer.Text = "Channel Buffer";
@@ -252,7 +290,7 @@
       this.rtbxChannelBuffer.Dock = System.Windows.Forms.DockStyle.Fill;
       this.rtbxChannelBuffer.Location = new System.Drawing.Point(3, 16);
       this.rtbxChannelBuffer.Name = "rtbxChannelBuffer";
-      this.rtbxChannelBuffer.Size = new System.Drawing.Size(301, 92);
+      this.rtbxChannelBuffer.Size = new System.Drawing.Size(335, 92);
       this.rtbxChannelBuffer.TabIndex = 0;
       this.rtbxChannelBuffer.Text = "";
       // 
@@ -261,47 +299,11 @@
       this.timer1.Interval = 1000;
       this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
       // 
-      // tsbtEnable
-      // 
-      this.tsbtEnable.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-      this.tsbtEnable.Image = global::MDIForm_1.Properties.Resources.Run_16x;
-      this.tsbtEnable.ImageTransparentColor = System.Drawing.Color.Magenta;
-      this.tsbtEnable.Name = "tsbtEnable";
-      this.tsbtEnable.Size = new System.Drawing.Size(23, 22);
-      this.tsbtEnable.Text = "toolStripButton2";
-      this.tsbtEnable.Click += new System.EventHandler(this.tsbtEnable_Click);
-      // 
-      // tsbtClearMeta
-      // 
-      this.tsbtClearMeta.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-      this.tsbtClearMeta.Image = global::MDIForm_1.Properties.Resources.ResetTimelineView_inverse_16x;
-      this.tsbtClearMeta.ImageTransparentColor = System.Drawing.Color.Magenta;
-      this.tsbtClearMeta.Name = "tsbtClearMeta";
-      this.tsbtClearMeta.Size = new System.Drawing.Size(23, 22);
-      this.tsbtClearMeta.Text = "toolStripButton1";
-      this.tsbtClearMeta.Click += new System.EventHandler(this.tsbtClearMeta_Click);
-      // 
-      // tsslState
-      // 
-      this.tsslState.Image = global::MDIForm_1.Properties.Resources.Pause_grey_16x;
-      this.tsslState.Name = "tsslState";
-      this.tsslState.Size = new System.Drawing.Size(16, 17);
-      this.tsslState.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
-      this.tsslState.ToolTipText = "Disabled";
-      // 
-      // tsslTicker
-      // 
-      this.tsslTicker.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-      this.tsslTicker.Image = global::MDIForm_1.Properties.Resources.TaskCenterStatusBarAni_00_16x;
-      this.tsslTicker.Name = "tsslTicker";
-      this.tsslTicker.Size = new System.Drawing.Size(12, 17);
-      this.tsslTicker.Text = "\\";
-      // 
       // frmChannelForm
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(307, 314);
+      this.ClientSize = new System.Drawing.Size(341, 314);
       this.Controls.Add(this.gbxChannelBuffer);
       this.Controls.Add(this.tableLayoutPanel1);
       this.Controls.Add(this.toolStrip1);

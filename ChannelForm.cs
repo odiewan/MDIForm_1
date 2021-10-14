@@ -42,6 +42,8 @@ namespace ChanForm {
     TreeNode cfoNode;
     TreeView cfoTreeView;
     Series cfoSeries;
+    List<decimal> cfoDataRaw;
+
     public String cfoBuffer =  "";
 
     String cfoName;
@@ -298,7 +300,6 @@ namespace ChanForm {
 
       tsbtEnable.Image = cfoEnable ? bmpDisabled : bmpEnabled;
       tsslState.Image = cfoEnable ? bmpEnabled : bmpDisabled;
-      //tsslState.Text = cfoEnable ? "Enabled" : "Disabled";
       timer1.Enabled = cfoEnable;
       tsslT.Text = "T:" + cfoT;
 
